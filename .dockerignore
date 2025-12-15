@@ -1,0 +1,17 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore virtual environment
+venv/
+.env/
+
+# Ignore DVC cache
+.dvc/
+
+# Ignore git files
+.git/
+.gitignore
+
+# Ignore Airflow logs (important!)
+airflow/logs/

@@ -1,0 +1,33 @@
+# Dockerfile content
+
+# Use a lightweight official Python runtime as the base image
+FROM python:3.10-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED 1
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy requirements file and install dependencies
+# This step is cached frequently, speeding up rebuilds
+COPY requirements.txt .
+RUN pip install --no-cache-dir --timeout 3600 -r requirements.txt
+
+# Install DVC as a separate step
+# DVC requires Git and basic command-line tools
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+RUN pip install dvc
+
+# Copy the rest of the application files
+# Includes src, tests, data folder (containing the .dvc file), and dvc.yaml
+COPY . .
+
+# Pull DVC-tracked files (like data/dataset.csv and models/model.pkl) 
+# from the local dvcstore where DVC init put them.
+# NOTE: This assumes the dvcstore is copied into the container via the COPY . . command.
+RUN dvc pull
+
+# Command to run the training pipeline when the container launches
+# We use dvc repro to ensure the stage runs based on dvc.yaml
+CMD ["dvc", "repro", "train_model"]

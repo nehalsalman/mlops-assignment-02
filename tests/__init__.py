@@ -1,0 +1,10 @@
+airflow/
+airflow/logs/
+airflow/logs/**
+.venv/
+venv/
+__pycache__/
+.git/
+.dvc/
+.pytest_cache/
+*.log
